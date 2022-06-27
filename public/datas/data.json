@@ -1,0 +1,20 @@
+[
+    {
+      "id": "Bonono",
+      "password": "1234qwer!",
+      "name": "권궁",
+      "birth": "19930518",
+      "gender": "남성",
+      "service": "SKT",
+      "phone": "01023957484"
+    },
+    {
+      "id": "Zettzett",
+      "password": "1234qwer!",
+      "name": "김동우",
+      "birth": "20001010",
+      "gender": "남성",
+      "service": "LG",
+      "phone": "01012341234"
+    }
+]

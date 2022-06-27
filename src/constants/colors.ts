@@ -1,0 +1,11 @@
+export default {
+  PRIMARY_600: '#319CFF',
+  PRIMARY_500: '#72D9FF',
+  PRIMARY_400: '#72D9FF',
+  PRIMARY_300: '#97E1FF',
+  PRIMARY_200: '#B6E8FF',
+  PRIMARY_100: '#CEEDFF',
+  WHITE: '#FFFFFF',
+  GRAY_400: '#D8D8D8',
+  GRAY_600: '#969696',
+} as const;
