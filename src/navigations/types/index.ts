@@ -8,8 +8,9 @@ export type RootStackParams = {
   Home: undefined;
   SignupAgree: undefined;
   InfoInput: undefined;
-  InfoCertification: undefined;
+  InfoCertification: { idValue: string; password: string };
   StackSignUp: undefined;
+  FindId: undefined;
 };
 
 export type RootStackNavigationProp =

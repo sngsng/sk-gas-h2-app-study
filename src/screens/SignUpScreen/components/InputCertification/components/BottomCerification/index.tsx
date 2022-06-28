@@ -7,12 +7,10 @@ import React, {
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { icons } from '@src/assets';
-import CustomCheckBox from '@src/components/atoms/CustomCheckBox';
-import CustomCheckBoxRe from '@src/components/atoms/CustomCheckBoxRe';
-import Button from '@src/components/molecules/Button';
-import HorizonLine from '@src/components/molecules/HorizonLine';
+import { CustomCheckBox, CustomCheckBoxRe } from '@src/components/atoms';
+import { Button, HorizonLine } from '@src/components/molecules';
 import { colors } from '@src/constants';
-import { useScreenNavigation } from '@src/navigations/hooks';
+import { useScreenNavigation, useScreenRoute } from '@src/navigations/hooks';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {}
@@ -26,6 +24,7 @@ const BottomCertification = forwardRef<BottomCertificationRef, Props>(
   (props, ref) => {
     const sheetRef = useRef<BottomSheet>(null);
     const navigation = useScreenNavigation();
+    const { params } = useScreenRoute();
 
     const [isPrivacy, setIsPraivacy] = useState<boolean>(false);
     const [isSkPrivacy, setIsSkPrivacy] = useState<boolean>(false);
@@ -65,7 +64,18 @@ const BottomCertification = forwardRef<BottomCertificationRef, Props>(
     };
 
     const onButtonPress = () => {
-      navigation.navigate('Home');
+      console.log(params);
+      // navigation.navigate('Home');
+    };
+
+    const getCheckImage = () => {
+      return isPrivacy &&
+        isSkPrivacy &&
+        isSkMarcketing &&
+        isUsePrivacy &&
+        isUseService
+        ? icons.TOGGLE
+        : icons.UN_TOGGLE;
     };
 
     const renderContent = () => (
@@ -85,26 +95,15 @@ const BottomCertification = forwardRef<BottomCertificationRef, Props>(
         <HorizonLine />
         <View style={styles.buttonContent}>
           <View style={styles.rowView}>
-            <TouchableOpacity onPressIn={onAllCheckedPress}>
-              {isPrivacy &&
-              isSkPrivacy &&
-              isSkMarcketing &&
-              isUsePrivacy &&
-              isUseService ? (
-                <CustomCheckBoxRe
-                  checkImage={icons.TOGGLE}
-                  checkWidth={20}
-                  checkHeight={20}
-                />
-              ) : (
-                <CustomCheckBoxRe
-                  checkImage={icons.UN_TOGGLE}
-                  checkWidth={20}
-                  checkHeight={20}
-                />
-              )}
-            </TouchableOpacity>
-            <Text style={styles.rowViewTitle}>전체 약관에 동의합니다.</Text>
+            <CustomCheckBoxRe
+              checkImage={getCheckImage()}
+              checkWidth={20}
+              checkHeight={20}
+              onPress={onAllCheckedPress}
+            />
+            <Text style={styles.rowViewTitle} onPress={onAllCheckedPress}>
+              전체 약관에 동의합니다.
+            </Text>
           </View>
           <HorizonLine />
           <View style={styles.rowView}>
@@ -195,6 +194,7 @@ const BottomCertification = forwardRef<BottomCertificationRef, Props>(
         renderContent={renderContent}
         snapPoints={[440, 0]}
         initialSnap={1}
+        enabledContentGestureInteraction={false}
       />
     );
   },

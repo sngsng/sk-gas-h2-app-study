@@ -4,7 +4,7 @@ import BottomSheet from 'reanimated-bottom-sheet';
 import Button from '@src/components/molecules/Button';
 import CustomInput from '@src/components/molecules/CustomInput';
 import { colors } from '@src/constants';
-import { useScreenNavigation } from '@src/navigations/hooks';
+import { useScreenNavigation, useScreenRoute } from '@src/navigations/hooks';
 import BottomCertification, {
   BottomCertificationRef,
 } from './components/BottomCerification';
@@ -12,14 +12,18 @@ import BottomGender, { BottomGenderRef } from './components/BottomGender';
 import BottomService, { BottomServiceRef } from './components/BottomService';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface Props {}
+interface Props {
+  certiFind?: boolean;
+  easyFind?: boolean;
+}
 
 const InputCertification: FunctionComponent<Props> =
-  function InputCertification() {
+  function InputCertification({ certiFind, easyFind }) {
     const CertifiactionRef = useRef<BottomCertificationRef>(null);
     const GenderRef = useRef<BottomGenderRef>(null);
     const ServiceRef = useRef<BottomServiceRef>(null);
 
+    // const { params } = useScreenRoute();
     const [name, setName] = useState<string>('');
     const [nameFocus, setNameFocus] = useState<boolean>(false);
 
@@ -32,14 +36,18 @@ const InputCertification: FunctionComponent<Props> =
     const [service, setService] = useState<string>('');
     const [serviceFocus, setServiceFocus] = useState<boolean>(false);
 
+    console.log('certiFind', certiFind);
+    console.log('easyFind', easyFind);
     return (
       <>
         <SafeAreaView style={styles.screen}>
           <ScrollView>
             <View style={styles.screenMargin}>
-              <View style={styles.marginBottom}>
-                <Text style={styles.title}>본인인증이 필요합니다.</Text>
-              </View>
+              {certiFind || easyFind ? null : (
+                <View style={styles.marginBottom}>
+                  <Text style={styles.title}>본인인증이 필요합니다.</Text>
+                </View>
+              )}
               <View>
                 <CustomInput
                   label="이름"
@@ -84,7 +92,7 @@ const InputCertification: FunctionComponent<Props> =
                   borderColor={colors.PRIMARY_600}
                   height={52}
                   placeholder="통신사를 선택해주세요"
-                  onChangeText={text => setService(text)}
+                  // onChangeText={text => setService(text)}
                   marginBottom={30}
                   onPressIn={() => ServiceRef.current?.open()}
                   value={service}
@@ -97,16 +105,29 @@ const InputCertification: FunctionComponent<Props> =
             </View>
           </ScrollView>
           <View style={styles.buttonView}>
-            <Button
-              label="동의하고 가입"
-              buttonColor={colors.PRIMARY_600}
-              height="56px"
-              textColor={colors.WHITE}
-              textSize={16}
-              textWeight={700}
-              marginBottom={16}
-              onPress={() => CertifiactionRef.current?.open()}
-            />
+            {name && birth && gender && service ? (
+              <Button
+                label="동의하고 가입"
+                buttonColor={colors.PRIMARY_600}
+                height="56px"
+                textColor={colors.WHITE}
+                textSize={16}
+                textWeight={700}
+                marginBottom={16}
+                onPress={() => CertifiactionRef.current?.open()}
+              />
+            ) : (
+              <Button
+                label="동의하고 가입"
+                buttonColor={colors.GRAY_400}
+                height="56px"
+                textColor={colors.GRAY_600}
+                textSize={16}
+                textWeight={700}
+                marginBottom={16}
+                disabled
+              />
+            )}
           </View>
         </SafeAreaView>
 

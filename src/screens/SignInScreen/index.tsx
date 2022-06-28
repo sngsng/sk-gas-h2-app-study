@@ -75,6 +75,10 @@ const SigninScreen: FunctionComponent<Props> = function SigninScreen() {
     setModalPassVisible(false);
   };
 
+  const onFindIdPress = () => {
+    navigation.navigate('FindId');
+  };
+
   return (
     <SafeAreaView style={styles.screen}>
       <View style={styles.container}>
@@ -105,6 +109,7 @@ const SigninScreen: FunctionComponent<Props> = function SigninScreen() {
           onBlur={() => setPasswordFocus(false)}
           idFocus={passwordFocus}
           marginBottom={16}
+          isPassword
         />
         {idValue && password ? (
           <Button
@@ -129,7 +134,9 @@ const SigninScreen: FunctionComponent<Props> = function SigninScreen() {
             disabled
           />
         )}
-        <Text style={styles.textFind}>아이디 / 비밀번호 찾기</Text>
+        <Text style={styles.textFind} onPress={onFindIdPress}>
+          아이디 / 비밀번호 찾기
+        </Text>
       </View>
 
       <Modal

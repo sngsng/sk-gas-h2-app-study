@@ -19,7 +19,7 @@ const Button: FunctionComponent<Props> = function Button({
   buttonColor,
   height,
   textColor,
-  textSize,
+  textSize = 14,
   textWeight,
   borderColor,
   borderWidth = 0,

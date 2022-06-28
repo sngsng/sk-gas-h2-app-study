@@ -1,6 +1,7 @@
 import React from 'react';
 import { Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import FindidScreen from '@src/screens/FindIdScreen';
 import HomeScreen from '@src/screens/HomeScreen';
 import MainScreen from '@src/screens/MainScreen';
 import SigninScreen from '@src/screens/SignInScreen';
@@ -69,6 +70,19 @@ const RootStackNavigator = function RootStackNavigator() {
         options={{
           headerShown: true,
           headerTitle: '회원가입',
+          animation: Platform.select({
+            android: 'slide_from_right',
+            ios: 'simple_push',
+          }),
+          headerBackTitle: '',
+        }}
+      />
+      <Stack.Screen
+        name={'FindId'}
+        component={FindidScreen}
+        options={{
+          headerShown: true,
+          headerTitle: '아이디 찾기',
           animation: Platform.select({
             android: 'slide_from_right',
             ios: 'simple_push',
