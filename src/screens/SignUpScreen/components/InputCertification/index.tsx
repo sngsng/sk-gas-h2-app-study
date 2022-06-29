@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { SafeAreaView, ScrollView, View, Text, StyleSheet } from 'react-native';
-import BottomSheet from 'reanimated-bottom-sheet';
 import Button from '@src/components/molecules/Button';
 import CustomInput from '@src/components/molecules/CustomInput';
 import { colors } from '@src/constants';
@@ -19,6 +18,7 @@ interface Props {
 
 const InputCertification: FunctionComponent<Props> =
   function InputCertification({ certiFind, easyFind }) {
+    const navigation = useScreenNavigation();
     const CertifiactionRef = useRef<BottomCertificationRef>(null);
     const GenderRef = useRef<BottomGenderRef>(null);
     const ServiceRef = useRef<BottomServiceRef>(null);
@@ -36,8 +36,30 @@ const InputCertification: FunctionComponent<Props> =
     const [service, setService] = useState<string>('');
     const [serviceFocus, setServiceFocus] = useState<boolean>(false);
 
-    console.log('certiFind', certiFind);
-    console.log('easyFind', easyFind);
+    const [phone, setPhone] = useState<string>('');
+    const [phoneFocus, setPhoneFocus] = useState<boolean>(false);
+
+    const onAuthFlowPress = () => {
+      if (easyFind) {
+        navigation.push('Auth', { easyBody });
+      } else if (certiFind) {
+        navigation.push('Auth', { certiBody });
+      }
+    };
+
+    let easyBody = {
+      name,
+      phone,
+    };
+
+    let certiBody = {
+      name,
+      birth,
+      gender,
+      service,
+      phone,
+    };
+
     return (
       <>
         <SafeAreaView style={styles.screen}>
@@ -61,79 +83,122 @@ const InputCertification: FunctionComponent<Props> =
                   onBlur={() => setNameFocus(false)}
                   value={name}
                 />
+                {easyFind ? null : (
+                  <>
+                    <CustomInput
+                      label="생년월일"
+                      borderColor={colors.PRIMARY_600}
+                      height={52}
+                      placeholder="생년월일 예) 1990716"
+                      onChangeText={text => setBirth(text)}
+                      marginBottom={30}
+                      idFocus={birthFocus}
+                      onFocus={() => setBirthFocus(true)}
+                      onBlur={() => setBirthFocus(false)}
+                      value={birth}
+                    />
+                    <CustomInput
+                      label="성별"
+                      borderColor={colors.PRIMARY_600}
+                      height={52}
+                      placeholder="성별을 입력하세요"
+                      marginBottom={30}
+                      onPressIn={() => GenderRef.current?.open()}
+                      value={gender}
+                      idFocus={genderFocus}
+                      onFocus={() => setGenderFocus(true)}
+                      onBlur={() => setGenderFocus(false)}
+                      caretHidden
+                    />
+                    <CustomInput
+                      label="통신사 선택"
+                      borderColor={colors.PRIMARY_600}
+                      height={52}
+                      placeholder="통신사를 선택해주세요"
+                      marginBottom={30}
+                      onPressIn={() => ServiceRef.current?.open()}
+                      value={service}
+                      idFocus={serviceFocus}
+                      onFocus={() => setServiceFocus(true)}
+                      onBlur={() => setServiceFocus(false)}
+                      caretHidden
+                    />
+                  </>
+                )}
                 <CustomInput
-                  label="생년월일"
+                  label="전화번호"
                   borderColor={colors.PRIMARY_600}
                   height={52}
-                  placeholder="생년월일 예) 1990716"
-                  onChangeText={text => setBirth(text)}
+                  placeholder="숫자만 입력해주세요"
+                  onChangeText={text => setPhone(text)}
                   marginBottom={30}
-                  idFocus={birthFocus}
-                  onFocus={() => setBirthFocus(true)}
-                  onBlur={() => setBirthFocus(false)}
-                  value={birth}
-                />
-                <CustomInput
-                  label="성별"
-                  borderColor={colors.PRIMARY_600}
-                  height={52}
-                  placeholder="성별을 입력하세요"
-                  // onChangeText={text => setGender(text)}
-                  marginBottom={30}
-                  onPressIn={() => GenderRef.current?.open()}
-                  value={gender}
-                  idFocus={genderFocus}
-                  onFocus={() => setGenderFocus(true)}
-                  onBlur={() => setGenderFocus(false)}
-                  caretHidden
-                />
-                <CustomInput
-                  label="통신사 선택"
-                  borderColor={colors.PRIMARY_600}
-                  height={52}
-                  placeholder="통신사를 선택해주세요"
-                  // onChangeText={text => setService(text)}
-                  marginBottom={30}
-                  onPressIn={() => ServiceRef.current?.open()}
-                  value={service}
-                  idFocus={serviceFocus}
-                  onFocus={() => setServiceFocus(true)}
-                  onBlur={() => setServiceFocus(false)}
-                  caretHidden
+                  idFocus={phoneFocus}
+                  onFocus={() => setPhoneFocus(true)}
+                  onBlur={() => setPhoneFocus(false)}
+                  value={phone}
                 />
               </View>
             </View>
           </ScrollView>
-          <View style={styles.buttonView}>
-            {name && birth && gender && service ? (
-              <Button
-                label="동의하고 가입"
-                buttonColor={colors.PRIMARY_600}
-                height="56px"
-                textColor={colors.WHITE}
-                textSize={16}
-                textWeight={700}
-                marginBottom={16}
-                onPress={() => CertifiactionRef.current?.open()}
-              />
-            ) : (
-              <Button
-                label="동의하고 가입"
-                buttonColor={colors.GRAY_400}
-                height="56px"
-                textColor={colors.GRAY_600}
-                textSize={16}
-                textWeight={700}
-                marginBottom={16}
-                disabled
-              />
-            )}
-          </View>
+
+          {certiFind || easyFind ? (
+            <View style={styles.buttonView}>
+              {name ? (
+                <Button
+                  label="확인"
+                  buttonColor={colors.PRIMARY_600}
+                  height="56px"
+                  textColor={colors.WHITE}
+                  textSize={16}
+                  textWeight={700}
+                  marginBottom={16}
+                  onPress={onAuthFlowPress}
+                />
+              ) : (
+                <Button
+                  label="확인"
+                  buttonColor={colors.GRAY_400}
+                  height="56px"
+                  textColor={colors.GRAY_600}
+                  textSize={16}
+                  textWeight={700}
+                  marginBottom={16}
+                  disabled
+                />
+              )}
+            </View>
+          ) : (
+            <View style={styles.buttonView}>
+              {name && birth && gender && service && phone ? (
+                <Button
+                  label="동의하고 가입"
+                  buttonColor={colors.PRIMARY_600}
+                  height="56px"
+                  textColor={colors.WHITE}
+                  textSize={16}
+                  textWeight={700}
+                  marginBottom={16}
+                  onPress={() => CertifiactionRef.current?.open()}
+                />
+              ) : (
+                <Button
+                  label="동의하고 가입"
+                  buttonColor={colors.GRAY_400}
+                  height="56px"
+                  textColor={colors.GRAY_600}
+                  textSize={16}
+                  textWeight={700}
+                  marginBottom={16}
+                  disabled
+                />
+              )}
+            </View>
+          )}
         </SafeAreaView>
 
         <BottomGender ref={GenderRef} isGender={setGender} />
         <BottomService ref={ServiceRef} isService={setService} />
-        <BottomCertification ref={CertifiactionRef} />
+        <BottomCertification ref={CertifiactionRef} userData={certiBody} />
       </>
     );
   };

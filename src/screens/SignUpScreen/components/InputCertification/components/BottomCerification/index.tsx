@@ -10,10 +10,13 @@ import { icons } from '@src/assets';
 import { CustomCheckBox, CustomCheckBoxRe } from '@src/components/atoms';
 import { Button, HorizonLine } from '@src/components/molecules';
 import { colors } from '@src/constants';
+import { UserData } from '@src/data';
 import { useScreenNavigation, useScreenRoute } from '@src/navigations/hooks';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface Props {}
+interface Props {
+  userData: UserData;
+}
 
 export interface BottomCertificationRef {
   open: () => void;
@@ -21,10 +24,10 @@ export interface BottomCertificationRef {
 }
 
 const BottomCertification = forwardRef<BottomCertificationRef, Props>(
-  (props, ref) => {
+  ({ userData }, ref) => {
     const sheetRef = useRef<BottomSheet>(null);
     const navigation = useScreenNavigation();
-    const { params } = useScreenRoute();
+    const { params } = useScreenRoute<'Auth'>();
 
     const [isPrivacy, setIsPraivacy] = useState<boolean>(false);
     const [isSkPrivacy, setIsSkPrivacy] = useState<boolean>(false);
@@ -64,8 +67,8 @@ const BottomCertification = forwardRef<BottomCertificationRef, Props>(
     };
 
     const onButtonPress = () => {
-      console.log(params);
-      // navigation.navigate('Home');
+      const result = Object.assign(userData, params);
+      navigation.navigate('Auth', { signUpData: result });
     };
 
     const getCheckImage = () => {

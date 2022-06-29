@@ -32,7 +32,7 @@ const InputInfo: FunctionComponent<Props> = function InputInfo() {
 
   const onButtonPress = () => {
     navigation.push('InfoCertification', {
-      idValue,
+      id: idValue,
       password,
     });
   };

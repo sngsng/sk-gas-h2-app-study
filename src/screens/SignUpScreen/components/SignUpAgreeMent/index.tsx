@@ -57,7 +57,7 @@ const SignUpAgreeMent: FunctionComponent<Props> = function SignUpAgreeMent() {
           </Text>
         </View>
         <View style={styles.certMargin}>
-          <View style={styles.rowView}>
+          <Pressable style={styles.rowView} onPressIn={onAllCheckedPress}>
             <CustomCheckBoxRe
               onPressIn={onAllCheckedPress}
               checkImage={getCheckImage()}
@@ -65,7 +65,7 @@ const SignUpAgreeMent: FunctionComponent<Props> = function SignUpAgreeMent() {
               checkHeight={20}
             />
             <Text style={styles.rowViewTitle}>전체 약관에 동의합니다.</Text>
-          </View>
+          </Pressable>
           <HorizonLine />
           <View style={styles.rowView}>
             <CustomCheckBox
