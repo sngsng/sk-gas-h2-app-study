@@ -96,6 +96,7 @@ const BottomGender = forwardRef<BottomGenderRef, Props>(({ isGender }, ref) => {
       borderRadius={8}
       renderContent={genderContent}
       initialSnap={1}
+      enabledContentGestureInteraction
     />
   );
 });

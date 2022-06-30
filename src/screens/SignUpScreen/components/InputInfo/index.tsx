@@ -27,10 +27,14 @@ const InputInfo: FunctionComponent<Props> = function InputInfo() {
   const [isConfirmAlert, setIsConfirmAlert] = useState<boolean>(false);
   const navigation = useScreenNavigation();
 
-  const emailRegex = /([a-zA-Z+]|([0-9])).{5,25}$/;
+  const emailRegex = /^[a-z0-9]+[a-z0-9]{4,19}$/g;
   const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{6,25}$/;
+
   const onButtonPress = () => {
-    navigation.push('InfoCertification');
+    navigation.push('InfoCertification', {
+      id: idValue,
+      password,
+    });
   };
 
   const onOverlabPress = () => {
@@ -43,7 +47,6 @@ const InputInfo: FunctionComponent<Props> = function InputInfo() {
           result.data.forEach(element => {
             if (element.id === idValue) {
               setIsOverlab(true);
-              // setIsIdAlert(false);
             }
           });
           setIsUsableId(true);
@@ -54,30 +57,33 @@ const InputInfo: FunctionComponent<Props> = function InputInfo() {
       }
     };
 
-    userAPI().catch(() => {});
+    if (!isIdAlert) userAPI().catch(() => {});
   };
 
   const checkOverlab = () => {
-    if (idValue.length !== 0) {
-      if (isIdAlert) {
-        return (
-          <Text style={styles.textAlert}>
-            영문, 숫자를 조합하여 5글자 이상 입력해주세요.
-          </Text>
-        );
-      }
-      if (!isIdAlert) {
-        return isOverlab ? (
-          <Text>중복된 아이디 입니다.</Text>
-        ) : (
-          <Text>중복확인을 해주세요.</Text>
-        );
-      }
-    }
-    return null;
+    return (
+      idValue.length !== 0 &&
+      (isIdAlert ? (
+        <Text style={styles.textAlert}>
+          영문, 숫자를 조합하여 5글자 이상 입력해주세요
+        </Text>
+      ) : (
+        <Text style={styles.textAlert}>중복 확인을 해주세요</Text>
+      ))
+    );
+  };
+
+  const pressOverlab = () => {
+    return isOverlab ? (
+      <Text style={styles.textAlert}>중복된 아이디 입니다</Text>
+    ) : (
+      <Text style={styles.textUsable}>사용 가능한 아이디 입니다.</Text>
+    );
   };
 
   useEffect(() => {
+    setIsOverlab(false);
+    setIsUsableId(false);
     if (!emailRegex.test(idValue)) {
       setIsIdAlert(true);
     } else {
@@ -140,11 +146,7 @@ const InputInfo: FunctionComponent<Props> = function InputInfo() {
                 />
               </View>
             </View>
-            {isUsableId ? (
-              <Text>사용가능한 아이디 입니다.</Text>
-            ) : (
-              checkOverlab()
-            )}
+            {isUsableId ? pressOverlab() : checkOverlab()}
             <CustomInput
               label="비밀번호"
               borderColor={colors.PRIMARY_600}
@@ -188,16 +190,36 @@ const InputInfo: FunctionComponent<Props> = function InputInfo() {
         </View>
       </ScrollView>
       <View style={styles.buttonView}>
-        <Button
-          label="다음"
-          buttonColor={colors.PRIMARY_600}
-          height="56px"
-          textColor={colors.WHITE}
-          textSize={16}
-          textWeight={700}
-          marginBottom={16}
-          onPress={onButtonPress}
-        />
+        {idValue &&
+        password &&
+        confirm &&
+        isUsableId &&
+        !isOverlab &&
+        !isIdAlert &&
+        !isPasswordAlert &&
+        !isConfirmAlert ? (
+          <Button
+            label="다음"
+            buttonColor={colors.PRIMARY_600}
+            height="56px"
+            textColor={colors.WHITE}
+            textSize={16}
+            textWeight={700}
+            marginBottom={16}
+            onPress={onButtonPress}
+          />
+        ) : (
+          <Button
+            label="다음"
+            buttonColor={colors.GRAY_400}
+            height="56px"
+            textColor={colors.GRAY_600}
+            textSize={16}
+            textWeight={700}
+            marginBottom={16}
+            disabled
+          />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -242,6 +264,11 @@ const styles = StyleSheet.create({
   },
   textAlert: {
     color: 'red',
+    fontSize: 12,
+    marginBottom: 10,
+  },
+  textUsable: {
+    color: colors.PRIMARY_600,
     fontSize: 12,
     marginBottom: 10,
   },

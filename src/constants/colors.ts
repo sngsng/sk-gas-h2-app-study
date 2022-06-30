@@ -7,5 +7,6 @@ export default {
   PRIMARY_100: '#CEEDFF',
   WHITE: '#FFFFFF',
   GRAY_400: '#D8D8D8',
+  GRAY_300: '#F3F3F3',
   GRAY_600: '#969696',
 } as const;

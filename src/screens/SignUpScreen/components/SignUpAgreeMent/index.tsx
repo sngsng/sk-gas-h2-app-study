@@ -37,6 +37,12 @@ const SignUpAgreeMent: FunctionComponent<Props> = function SignUpAgreeMent() {
     }
   };
 
+  const getCheckImage = () => {
+    return isPrivacy && isSkPrivacy && isSkMarcketing
+      ? icons.TOGGLE
+      : icons.UN_TOGGLE;
+  };
+
   const onButtonPress = () => {
     navigation.navigate('InfoInput');
   };
@@ -51,24 +57,15 @@ const SignUpAgreeMent: FunctionComponent<Props> = function SignUpAgreeMent() {
           </Text>
         </View>
         <View style={styles.certMargin}>
-          <View style={styles.rowView}>
-            <TouchableOpacity onPressIn={onAllCheckedPress}>
-              {isPrivacy && isSkPrivacy && isSkMarcketing ? (
-                <CustomCheckBoxRe
-                  checkImage={icons.TOGGLE}
-                  checkWidth={20}
-                  checkHeight={20}
-                />
-              ) : (
-                <CustomCheckBoxRe
-                  checkImage={icons.UN_TOGGLE}
-                  checkWidth={20}
-                  checkHeight={20}
-                />
-              )}
-            </TouchableOpacity>
+          <Pressable style={styles.rowView} onPressIn={onAllCheckedPress}>
+            <CustomCheckBoxRe
+              onPressIn={onAllCheckedPress}
+              checkImage={getCheckImage()}
+              checkWidth={20}
+              checkHeight={20}
+            />
             <Text style={styles.rowViewTitle}>전체 약관에 동의합니다.</Text>
-          </View>
+          </Pressable>
           <HorizonLine />
           <View style={styles.rowView}>
             <CustomCheckBox
