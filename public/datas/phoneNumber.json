@@ -12,5 +12,12 @@
     "gender": "남성",
     "service": "LG",
     "phone": "01012341234"
+  },
+  {
+    "name": "궁궁",
+    "birth": "20011016",
+    "gender": "여성",
+    "service": "LG",
+    "phone": "01022223333"
   }
 ]

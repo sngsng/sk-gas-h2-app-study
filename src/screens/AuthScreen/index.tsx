@@ -4,13 +4,14 @@ import axios from 'axios';
 import { Button } from '@src/components/molecules';
 import { colors } from '@src/constants';
 import { UserData } from '@src/data';
-import { useScreenRoute } from '@src/navigations/hooks';
+import { useScreenNavigation, useScreenRoute } from '@src/navigations/hooks';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {}
 
 const AuthScreen: FunctionComponent<Props> = function AuthScreen() {
   const { params } = useScreenRoute<'Auth'>();
+  const navigation = useScreenNavigation();
 
   const [isAuthError, setIsAuthError] = useState<boolean>(false);
   const [isSignUpModal, setIsSignUpModal] = useState<boolean>(false);
@@ -34,21 +35,47 @@ const AuthScreen: FunctionComponent<Props> = function AuthScreen() {
       const result = await axios.get<UserData[]>(
         'http://localhost:8081/public/datas/phoneNumber.json',
       );
+      let data = null;
       if (result.data) {
         result.data.forEach(element => {
-          if (element.phone === params.signUpData?.phone) {
-            // console.log('인증확인');
+          if (!params.signUpData) return;
+
+          const { id, password, ...res } = params.signUpData;
+
+          if (JSON.stringify(element) === JSON.stringify(res)) {
+            data = element;
           }
         });
-        // console.log('인증실패');
-        setIsAuthError(true);
+        if (!data) setIsAuthError(true);
+      }
+
+      if (data) {
+        let checked = null;
+        const findPhone = await axios.get<UserData[]>(
+          'http://localhost:8081/public/datas/data.json',
+        );
+
+        if (findPhone.data) {
+          findPhone.data.forEach(element => {
+            if (element.phone === params.signUpData?.phone) {
+              checked = element;
+              setIsSignUpModal(true);
+            }
+          });
+        }
+        if (!checked) {
+          console.log('clear');
+          findPhone.data.push(params.signUpData as UserData);
+        }
       }
     };
 
     if (params.certiBody || params.easyBody) {
       onFindAPI().catch(() => {});
     } else if (params.signUpData) {
-      onSighUpAPI().catch(() => {});
+      onSighUpAPI()
+        .then(res => console.log('res', res))
+        .catch(() => {});
     }
   };
 
@@ -124,7 +151,16 @@ const AuthScreen: FunctionComponent<Props> = function AuthScreen() {
               textColor={colors.WHITE}
               textSize={16}
               textWeight={700}
-              onPress={() => setIsSignUpModal(false)}
+              onPress={() => {
+                setIsSignUpModal(false);
+                navigation.reset({
+                  routes: [
+                    {
+                      name: 'Signin',
+                    },
+                  ],
+                });
+              }}
             />
           </View>
         </View>
@@ -152,7 +188,10 @@ const AuthScreen: FunctionComponent<Props> = function AuthScreen() {
               textColor={colors.WHITE}
               textSize={16}
               textWeight={700}
-              onPress={() => setIsAuthError(false)}
+              onPress={() => {
+                setIsAuthError(false);
+                navigation.goBack();
+              }}
             />
           </View>
         </View>

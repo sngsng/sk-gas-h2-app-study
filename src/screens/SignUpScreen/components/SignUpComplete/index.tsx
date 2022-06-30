@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { colors } from '@src/constants';
 import { Button } from '@src/components/molecules';
+import { colors } from '@src/constants';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {}

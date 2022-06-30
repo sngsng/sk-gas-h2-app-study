@@ -69,6 +69,7 @@ const BottomCertification = forwardRef<BottomCertificationRef, Props>(
     const onButtonPress = () => {
       const result = Object.assign(userData, params);
       navigation.navigate('Auth', { signUpData: result });
+      sheetRef.current?.snapTo(1);
     };
 
     const getCheckImage = () => {

@@ -27,7 +27,7 @@ const InputInfo: FunctionComponent<Props> = function InputInfo() {
   const [isConfirmAlert, setIsConfirmAlert] = useState<boolean>(false);
   const navigation = useScreenNavigation();
 
-  const emailRegex = /([a-zA-Z+]|([0-9])).{4,25}$/;
+  const emailRegex = /^[a-z0-9]+[a-z0-9]{4,19}$/g;
   const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{6,25}$/;
 
   const onButtonPress = () => {
