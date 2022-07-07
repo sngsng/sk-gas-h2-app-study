@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, View, Text, StyleSheet } from 'react-native';
+import { useMutation, useQuery } from 'react-query';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import Button from '@src/components/molecules/Button';
@@ -10,6 +11,15 @@ import { useScreenNavigation } from '@src/navigations/hooks';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {}
+
+interface ResIdCheck {
+  resCode: string;
+  detailMsg: string;
+  trcNo: string;
+  responseData: {
+    dupYn: string;
+  };
+}
 
 const InputInfo: FunctionComponent<Props> = function InputInfo() {
   const [idValue, setIdValue] = useState<string>('');
@@ -38,27 +48,47 @@ const InputInfo: FunctionComponent<Props> = function InputInfo() {
   };
 
   const onOverlabPress = () => {
-    const userAPI = async () => {
-      try {
-        const result = await axios.get<UserData[]>(
-          'http://localhost:8081/public/datas/data.json',
-        );
-        if (result.data) {
-          result.data.forEach(element => {
-            if (element.id === idValue) {
-              setIsOverlab(true);
-            }
-          });
-          setIsUsableId(true);
-        }
-        return result;
-      } catch (error) {
-        return error;
-      }
-    };
-
-    if (!isIdAlert) userAPI().catch(() => {});
+    setIsUsableId(true);
+    if (idCheckData.data === 'Y') {
+      setIsOverlab(true);
+    }
   };
+  const axiosIdCheck = async () => {
+    const body = {
+      serviceCode: 'G001',
+      chnl: '01',
+      version: '1.0',
+      trcNo: '20220630175000123456',
+      requestData: {
+        lognId: idValue,
+      },
+    };
+    try {
+      const response = await axios.post<ResIdCheck>(
+        'https://appdev.happylpg.com/apis/hmsmob/mbr/chkDupLgnId',
+        body,
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error('error');
+    }
+  };
+
+  const getFormattedIdCheck = async () => {
+    const checkData = await axiosIdCheck();
+    const formattedData = checkData.responseData.dupYn;
+    return formattedData;
+  };
+
+  const idCheckData = useQuery(['idCheck', idValue], getFormattedIdCheck, {
+    onSuccess: data => {
+      return data;
+    },
+    onError: error => {
+      return error;
+    },
+    // retry: false,
+  });
 
   const checkOverlab = () => {
     return (

@@ -4,18 +4,18 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { icons } from '@src/assets';
 import { CustomCheckBox, CustomCheckBoxRe } from '@src/components/atoms';
 import { Button, HorizonLine } from '@src/components/molecules';
 import { colors } from '@src/constants';
-import { UserData } from '@src/data';
+import { CertiBody } from '@src/data';
 import { useScreenNavigation, useScreenRoute } from '@src/navigations/hooks';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {
-  userData: UserData;
+  userData: CertiBody;
 }
 
 export interface BottomCertificationRef {
@@ -29,11 +29,28 @@ const BottomCertification = forwardRef<BottomCertificationRef, Props>(
     const navigation = useScreenNavigation();
     const { params } = useScreenRoute<'Auth'>();
 
-    const [isPrivacy, setIsPraivacy] = useState<boolean>(false);
-    const [isSkPrivacy, setIsSkPrivacy] = useState<boolean>(false);
-    const [isSkMarcketing, setIsSkMarcketing] = useState<boolean>(false);
-    const [isUsePrivacy, setIsUsePrivacy] = useState<boolean>(false);
-    const [isUseService, setIsUseService] = useState<boolean>(false);
+    const [termsList, setTermsList] = useState([
+      {
+        cluCd: 'terms1chk',
+        cluShrtCtt: '개인정보 이용 동의 여부',
+        isChecked: false,
+      },
+      {
+        cluCd: 'terms2chk',
+        cluShrtCtt: '고유식별 정보 처리 동의',
+        isChecked: false,
+      },
+      {
+        cluCd: 'terms3chk',
+        cluShrtCtt: '통신사 이용약관 동의',
+        isChecked: false,
+      },
+      {
+        cluCd: 'terms4chk',
+        cluShrtCtt: '서비스 이용약관 동의 여부',
+        isChecked: false,
+      },
+    ]);
 
     useImperativeHandle(
       ref,
@@ -44,42 +61,52 @@ const BottomCertification = forwardRef<BottomCertificationRef, Props>(
       [],
     );
 
+    console.log('bottom', userData);
+
+    const certiReq = {
+      phoneNo: userData.phone,
+      name: userData.name,
+      birthday: userData.birth,
+      gender: userData.gender,
+      phoneCorp: userData.service,
+      nation: '0',
+    };
+
+    // console.log(
+    //   'tt',
+    //   termsList.map(element => {
+    //     if (element.isChecked === true) {
+    //       const key = Object.fromEntries(element);
+    //       return key;
+    //     }
+    //   }),
+    // );
+
+    const allCheck = termsList
+      .map(terms => {
+        return terms.isChecked;
+      })
+      .every(value => value === true);
     const onAllCheckedPress = () => {
-      if (
-        isPrivacy &&
-        isSkPrivacy &&
-        isSkMarcketing &&
-        isUsePrivacy &&
-        isUseService
-      ) {
-        setIsPraivacy(false);
-        setIsSkMarcketing(false);
-        setIsSkPrivacy(false);
-        setIsUsePrivacy(false);
-        setIsUseService(false);
-      } else {
-        setIsPraivacy(true);
-        setIsSkMarcketing(true);
-        setIsSkPrivacy(true);
-        setIsUsePrivacy(true);
-        setIsUseService(true);
-      }
+      const result = termsList.map(terms => {
+        return {
+          ...terms,
+          isChecked: !allCheck,
+        };
+      });
+      setTermsList(result);
     };
 
     const onButtonPress = () => {
-      const result = Object.assign(userData, params);
-      navigation.navigate('Auth', { signUpData: result });
+      // const result = Object.assign(userData, params);
+
+      // 현재 input 데이터
+      navigation.navigate('Auth', { certiBody: certiReq });
       sheetRef.current?.snapTo(1);
     };
 
     const getCheckImage = () => {
-      return isPrivacy &&
-        isSkPrivacy &&
-        isSkMarcketing &&
-        isUsePrivacy &&
-        isUseService
-        ? icons.TOGGLE
-        : icons.UN_TOGGLE;
+      return allCheck ? icons.TOGGLE : icons.UN_TOGGLE;
     };
 
     const renderContent = () => (
@@ -110,83 +137,45 @@ const BottomCertification = forwardRef<BottomCertificationRef, Props>(
             </Text>
           </View>
           <HorizonLine />
-          <View style={styles.rowView}>
-            <CustomCheckBox
-              checkBool={isPrivacy}
-              checkSetBool={setIsPraivacy}
-              checkButtonImage={icons.UN_VECTOR}
-              uncheckButtonImage={icons.VECTOR}
-            />
-            <Text style={styles.rowViewContent}>(필수)</Text>
-            <Text style={styles.rowviewBorder}>개인정보 수집 및 이용동의</Text>
-          </View>
-          <View style={styles.rowView}>
-            <CustomCheckBox
-              checkBool={isSkPrivacy}
-              checkSetBool={setIsSkPrivacy}
-              checkButtonImage={icons.UN_VECTOR}
-              uncheckButtonImage={icons.VECTOR}
-            />
-            <Text style={styles.rowViewContent}>(필수)</Text>
-            <Text style={styles.rowviewBorder}>개인정보처리 방침 동의</Text>
-          </View>
-          <View style={styles.rowView}>
-            <CustomCheckBox
-              checkBool={isSkMarcketing}
-              checkSetBool={setIsSkMarcketing}
-              checkButtonImage={icons.UN_VECTOR}
-              uncheckButtonImage={icons.VECTOR}
-            />
-            <Text style={styles.rowViewContent}>(필수)</Text>
-            <Text style={styles.rowviewBorder}>고유식별 정보 처리 동의</Text>
-          </View>
-          <View style={styles.rowView}>
-            <CustomCheckBox
-              checkBool={isUsePrivacy}
-              checkSetBool={setIsUsePrivacy}
-              checkButtonImage={icons.UN_VECTOR}
-              uncheckButtonImage={icons.VECTOR}
-            />
-            <Text style={styles.rowViewContent}>(필수)</Text>
-            <Text style={styles.rowviewBorder}>개인정보 수집 이용 동의</Text>
-          </View>
-          <View style={styles.rowView}>
-            <CustomCheckBox
-              checkBool={isUseService}
-              checkSetBool={setIsUseService}
-              checkButtonImage={icons.UN_VECTOR}
-              uncheckButtonImage={icons.VECTOR}
-            />
-            <Text style={styles.rowViewContent}>(필수)</Text>
-            <Text style={styles.rowviewBorder}>통신사 이용약관 동의</Text>
-          </View>
-          {isPrivacy &&
-          isSkPrivacy &&
-          isSkMarcketing &&
-          isUsePrivacy &&
-          isUseService ? (
-            <Button
-              label="동의하고 가입"
-              buttonColor={colors.PRIMARY_600}
-              height="56px"
-              textColor={colors.WHITE}
-              textSize={16}
-              textWeight={700}
-              marginBottom={16}
-              onPress={onButtonPress}
-            />
-          ) : (
-            <Button
-              label="동의하고 가입"
-              buttonColor={colors.GRAY_400}
-              height="56px"
-              textColor={colors.GRAY_600}
-              textSize={16}
-              textWeight={700}
-              marginBottom={16}
-              disabled
-            />
-          )}
+          {termsList.map(terms => {
+            return (
+              // <Pressable onPress={() => terms.termsChk}>
+              <View style={styles.rowView}>
+                <CustomCheckBox
+                  cluCd={terms.cluCd}
+                  isChecked={terms.isChecked}
+                  checkSetBool={termsKey => {
+                    const checked = termsList.map(element => {
+                      if (element.cluCd === termsKey) {
+                        return {
+                          ...element,
+                          isChecked: !element.isChecked,
+                        };
+                      }
+                      return element;
+                    });
+                    setTermsList(checked);
+                  }}
+                  checkButtonImage={icons.UN_VECTOR}
+                  uncheckButtonImage={icons.VECTOR}
+                />
+                <Text style={styles.rowViewContent}>(필수)</Text>
+                <Text style={styles.rowviewBorder}>{terms.cluShrtCtt}</Text>
+              </View>
+              // </Pressable>
+            );
+          })}
+          <Button
+            label="동의하고 가입"
+            buttonColor={allCheck ? colors.PRIMARY_600 : colors.GRAY_400}
+            height="56px"
+            textColor={allCheck ? colors.WHITE : colors.GRAY_600}
+            textSize={16}
+            textWeight={700}
+            marginBottom={16}
+            onPress={onButtonPress}
+            disabled={!allCheck}
+          />
         </View>
       </View>
     );

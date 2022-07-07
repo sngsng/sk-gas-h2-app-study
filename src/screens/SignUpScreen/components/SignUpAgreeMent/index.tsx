@@ -7,13 +7,15 @@ import {
   StyleSheet,
   Pressable,
 } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useQuery } from 'react-query';
+import axios, { AxiosError } from 'axios';
 import { icons } from '@src/assets';
+import { CustomCheckBoxRe } from '@src/components/atoms';
 import CustomCheckBox from '@src/components/atoms/CustomCheckBox';
-import CustomCheckBoxRe from '@src/components/atoms/CustomCheckBoxRe';
-import Button from '@src/components/molecules/Button';
+import { Button } from '@src/components/molecules';
 import HorizonLine from '@src/components/molecules/HorizonLine';
 import { colors } from '@src/constants';
+import { TermsList, ResTerms, Terms } from '@src/data';
 import { useScreenNavigation } from '@src/navigations/hooks';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -21,31 +23,92 @@ interface Props {}
 
 const SignUpAgreeMent: FunctionComponent<Props> = function SignUpAgreeMent() {
   const navigation = useScreenNavigation();
-  const [isPrivacy, setIsPraivacy] = useState<boolean>(false);
-  const [isSkPrivacy, setIsSkPrivacy] = useState<boolean>(false);
-  const [isSkMarcketing, setIsSkMarcketing] = useState<boolean>(false);
 
-  const onAllCheckedPress = () => {
-    if (isPrivacy && isSkPrivacy && isSkMarcketing) {
-      setIsPraivacy(false);
-      setIsSkMarcketing(false);
-      setIsSkPrivacy(false);
-    } else {
-      setIsPraivacy(true);
-      setIsSkMarcketing(true);
-      setIsSkPrivacy(true);
-    }
-  };
-
-  const getCheckImage = () => {
-    return isPrivacy && isSkPrivacy && isSkMarcketing
-      ? icons.TOGGLE
-      : icons.UN_TOGGLE;
-  };
+  let requireNum = 0;
+  const [lastLength, setLastLength] = useState<number>(0);
 
   const onButtonPress = () => {
     navigation.navigate('InfoInput');
   };
+
+  const body = {
+    serviceCode: 'G001',
+    chnl: '01',
+    version: '1.0',
+    trcNo: '20220103100000123456',
+    requestData: {
+      svcCluFg: '01',
+    },
+  };
+
+  const axiosTermsList = async () => {
+    try {
+      const response = await axios.post<ResTerms>(
+        'https://appdev.happylpg.com/apis/hmsmob/mbr/cluList',
+        body,
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error('error');
+    }
+  };
+
+  const getFormattedTermsList = async (): Promise<Terms[]> => {
+    const termsList: ResTerms = await axiosTermsList();
+    return termsList.responseData.cluList;
+  };
+
+  const { data } = useQuery<Terms[], AxiosError>(
+    'terms',
+    getFormattedTermsList,
+  );
+
+  const [termsList, setTermsList] = useState<TermsList[]>();
+
+  useEffect(() => {
+    if (!data) return;
+    const fetchList = data.map(element => {
+      return {
+        ...element,
+        isChecked: false,
+      };
+    });
+    setTermsList(fetchList);
+  }, [data]);
+
+  const allCheck = termsList
+    ?.map(terms => {
+      return terms.isChecked;
+    })
+    .every(value => value === true);
+
+  const onAllCheckedPress = () => {
+    const result = termsList?.map(terms => {
+      return {
+        ...terms,
+        isChecked: !allCheck,
+      };
+    });
+    setTermsList(result);
+  };
+
+  const isSomeTrue = termsList
+    ?.map(terms => {
+      return terms.isChecked;
+    })
+    .slice(0, 3)
+    .every(value => {
+      return value === true;
+    });
+
+  const getCheckImage = () => {
+    return allCheck ? icons.TOGGLE : icons.UN_TOGGLE;
+  };
+
+  const onTermsDetailPress = (term: TermsList) => {
+    navigation.navigate('TermsDetail', { term });
+  };
+
   return (
     <SafeAreaView style={styles.screen}>
       <ScrollView>
@@ -67,66 +130,56 @@ const SignUpAgreeMent: FunctionComponent<Props> = function SignUpAgreeMent() {
             <Text style={styles.rowViewTitle}>전체 약관에 동의합니다.</Text>
           </Pressable>
           <HorizonLine />
-          <View style={styles.rowView}>
-            <CustomCheckBox
-              checkBool={isPrivacy}
-              checkSetBool={setIsPraivacy}
-              checkButtonImage={icons.UN_VECTOR}
-              uncheckButtonImage={icons.VECTOR}
-            />
-            <Text style={styles.rowViewContent}>(필수)</Text>
-            <Text style={styles.rowviewBorder}>개인정보 수집 및 이용동의</Text>
-          </View>
-          <View style={styles.rowView}>
-            <CustomCheckBox
-              checkBool={isSkPrivacy}
-              checkSetBool={setIsSkPrivacy}
-              checkButtonImage={icons.UN_VECTOR}
-              uncheckButtonImage={icons.VECTOR}
-            />
-            <Text style={styles.rowViewContent}>(선택)</Text>
-            <Text style={styles.rowviewBorder}>
-              SK가스 개인(신용) 정보의 수집, 이용에 관한 사항
-            </Text>
-          </View>
-          <View style={styles.rowView}>
-            <CustomCheckBox
-              checkBool={isSkMarcketing}
-              checkSetBool={setIsSkMarcketing}
-              checkButtonImage={icons.UN_VECTOR}
-              uncheckButtonImage={icons.VECTOR}
-            />
-            <Text style={styles.rowViewContent}>(선택)</Text>
-            <Text style={styles.rowviewBorder}>
-              SK가스 마케팅 수신, 개인정보 제공 동의
-            </Text>
-          </View>
+          {termsList?.map(terms => {
+            if (terms.mndtAgrYn === 'Y') requireNum += 1;
+            return (
+              <View key={terms.cluCd} style={styles.rowView}>
+                <CustomCheckBox
+                  cluCd={terms.cluCd}
+                  isChecked={terms.isChecked}
+                  checkSetBool={termsKey => {
+                    if (!termsList) return;
+                    const checked = termsList?.map(element => {
+                      if (element.cluCd === termsKey) {
+                        return {
+                          ...element,
+                          isChecked: !element.isChecked,
+                        };
+                      }
+                      return element;
+                    });
+                    setTermsList(checked);
+                  }}
+                  checkButtonImage={icons.UN_VECTOR}
+                  uncheckButtonImage={icons.VECTOR}
+                />
+                <Text style={styles.rowViewContent}>{`${
+                  terms.mndtAgrYn === 'Y' ? '(필수)' : '(선택)'
+                }`}</Text>
+                <Text
+                  style={styles.rowviewBorder}
+                  onPress={() => onTermsDetailPress(terms)}
+                >
+                  {terms.cluShrtCtt}
+                </Text>
+              </View>
+            );
+          })}
         </View>
       </ScrollView>
       <View style={styles.buttonView}>
-        {!isPrivacy ? (
-          <Button
-            label="동의하고 가입"
-            buttonColor={colors.GRAY_400}
-            height="56px"
-            textColor={colors.GRAY_600}
-            textSize={16}
-            textWeight={700}
-            marginBottom={16}
-            disabled
-          />
-        ) : (
-          <Button
-            label="동의하고 가입"
-            buttonColor={colors.PRIMARY_600}
-            height="56px"
-            textColor={colors.WHITE}
-            textSize={16}
-            textWeight={700}
-            marginBottom={16}
-            onPress={onButtonPress}
-          />
-        )}
+        <Button
+          label="동의하고 가입"
+          buttonColor={isSomeTrue ? colors.PRIMARY_600 : colors.GRAY_400}
+          height="56px"
+          textColor={isSomeTrue ? colors.WHITE : colors.GRAY_600}
+          ß
+          textSize={16}
+          textWeight={700}
+          marginBottom={16}
+          onPress={onButtonPress}
+          disabled={!isSomeTrue}
+        />
       </View>
     </SafeAreaView>
   );

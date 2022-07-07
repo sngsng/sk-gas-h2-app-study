@@ -53,6 +53,7 @@ const BottomService = forwardRef<BottomServiceRef, Props>(
           onPress={() => {
             setService('SKT');
             isService('SKT');
+            genderRef.current?.snapTo(1);
           }}
         >
           <Text style={styles.bottomContentText}>SKT</Text>
@@ -70,12 +71,13 @@ const BottomService = forwardRef<BottomServiceRef, Props>(
         <Pressable
           style={styles.bottomContent}
           onPress={() => {
-            setService('KT');
-            isService('KT');
+            setService('KTF');
+            isService('KTF');
+            genderRef.current?.snapTo(1);
           }}
         >
           <Text style={styles.bottomContentText}>KT</Text>
-          {service === 'KT' ? (
+          {service === 'KTF' ? (
             <CustomCheckBoxRe
               checkImage={icons.UN_VECTOR}
               checkWidth={30}
@@ -89,12 +91,13 @@ const BottomService = forwardRef<BottomServiceRef, Props>(
         <Pressable
           style={styles.bottomContent}
           onPress={() => {
-            setService('LG');
-            isService('LG');
+            setService('LGT');
+            isService('LGT');
+            genderRef.current?.snapTo(1);
           }}
         >
           <Text style={styles.bottomContentText}>LG</Text>
-          {service === 'LG' ? (
+          {service === 'LGT' ? (
             <CustomCheckBoxRe
               checkImage={icons.UN_VECTOR}
               checkWidth={30}
@@ -108,12 +111,13 @@ const BottomService = forwardRef<BottomServiceRef, Props>(
         <Pressable
           style={styles.bottomContent}
           onPress={() => {
-            setService('SKT 알뜰폰');
-            isService('SKT 알뜰폰');
+            setService('SKM');
+            isService('SKM');
+            genderRef.current?.snapTo(1);
           }}
         >
           <Text style={styles.bottomContentText}>SKT 알뜰폰</Text>
-          {service === 'SKT 알뜰폰' ? (
+          {service === 'SKM' ? (
             <CustomCheckBoxRe
               checkImage={icons.UN_VECTOR}
               checkWidth={30}
@@ -127,12 +131,13 @@ const BottomService = forwardRef<BottomServiceRef, Props>(
         <Pressable
           style={styles.bottomContent}
           onPress={() => {
-            setService('KT 알뜰폰');
-            isService('KT 알뜰폰');
+            setService('KTM');
+            isService('KTM');
+            genderRef.current?.snapTo(1);
           }}
         >
           <Text style={styles.bottomContentText}>KT 알뜰폰</Text>
-          {service === 'KT 알뜰폰' ? (
+          {service === 'KTM' ? (
             <CustomCheckBoxRe
               checkImage={icons.UN_VECTOR}
               checkWidth={30}
@@ -146,12 +151,13 @@ const BottomService = forwardRef<BottomServiceRef, Props>(
         <Pressable
           style={styles.bottomContent}
           onPress={() => {
-            setService('LG 알뜰폰');
-            isService('LG 알뜰폰');
+            setService('LGM');
+            isService('LGM');
+            genderRef.current?.snapTo(1);
           }}
         >
           <Text style={styles.bottomContentText}>LG 알뜰폰</Text>
-          {service === 'LG 알뜰폰' ? (
+          {service === 'LGM' ? (
             <CustomCheckBoxRe
               checkImage={icons.UN_VECTOR}
               checkWidth={30}
