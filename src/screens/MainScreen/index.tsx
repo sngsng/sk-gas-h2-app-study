@@ -1,13 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import {
-  GestureResponderEvent,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { images } from '@src/assets';
 import Button from '@src/components/molecules/Button';

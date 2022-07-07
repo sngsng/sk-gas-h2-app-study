@@ -16,8 +16,10 @@ const AuthScreen: FunctionComponent<Props> = function AuthScreen() {
   const [isAuthError, setIsAuthError] = useState<boolean>(false);
   const [isSignUpModal, setIsSignUpModal] = useState<boolean>(false);
 
+  console.log(params.certiBody);
+
   const onPhoneAuthPress = () => {
-    // console.log('params', params);
+    console.log('params', params);
     const onFindAPI = async () => {
       const result = await axios.get<UserData[]>(
         'http://localhost:8081/public/datas/data.json',
@@ -64,7 +66,6 @@ const AuthScreen: FunctionComponent<Props> = function AuthScreen() {
           });
         }
         if (!checked) {
-          console.log('clear');
           findPhone.data.push(params.signUpData as UserData);
         }
       }

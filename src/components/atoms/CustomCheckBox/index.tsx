@@ -1,10 +1,4 @@
-import React, {
-  Dispatch,
-  FunctionComponent,
-  SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
+import React, { FunctionComponent } from 'react';
 import {
   Pressable,
   StyleSheet,
@@ -14,32 +8,29 @@ import {
   ImageSourcePropType,
   PressableProps,
 } from 'react-native';
+import { TermsList } from '@src/data';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props extends PressableProps {
-  checkSetBool: Dispatch<SetStateAction<boolean>>;
-  checkBool: boolean;
+  checkSetBool: (checked: string) => void;
   checkButtonImage: ImageSourcePropType & ImageURISource;
   uncheckButtonImage: ImageSourcePropType & ImageURISource;
+  cluCd: string;
+  isChecked?: boolean;
+  // terms: TermsList;
 }
 
 const CustomCheckBox: FunctionComponent<Props> = function CustomCheckBox({
   checkSetBool,
-  checkBool,
   checkButtonImage,
   uncheckButtonImage,
+  // terms,
+  cluCd,
+  isChecked,
 }) {
-  const [isChecked, setIsChecked] = useState<boolean>(false);
-
-  useEffect(() => {
-    setIsChecked(checkBool);
-  }, [checkBool]);
-
   const onCheckBoxPress = () => {
-    setIsChecked(!checkBool);
-    checkSetBool(!checkBool);
+    checkSetBool(cluCd);
   };
-
   return (
     <Pressable onPress={onCheckBoxPress}>
       <View style={styles.rowView}>

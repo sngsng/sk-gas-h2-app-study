@@ -1,5 +1,5 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { CertiBody, EasyBody, UserData } from '@src/data';
+import { CertiBody, CertiReq, EasyBody, TermsList } from '@src/data';
 
 export type RootStackParams = {
   Tutorial: undefined;
@@ -13,7 +13,8 @@ export type RootStackParams = {
   StackSignUp: undefined;
   SignUpComplete: undefined;
   FindId: undefined;
-  Auth: { easyBody?: EasyBody; certiBody?: CertiBody; signUpData?: UserData };
+  Auth: { easyBody?: EasyBody; certiBody?: CertiReq; signUpData?: CertiBody };
+  TermsDetail: { term: TermsList };
 };
 
 export type RootStackNavigationProp =

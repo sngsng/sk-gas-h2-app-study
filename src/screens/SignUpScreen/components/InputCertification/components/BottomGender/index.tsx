@@ -2,8 +2,9 @@ import React, {
   Dispatch,
   forwardRef,
   SetStateAction,
-  useEffect,
   useImperativeHandle,
+  useRef,
+  useState,
 } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -21,8 +22,8 @@ export interface BottomGenderRef {
 }
 
 const BottomGender = forwardRef<BottomGenderRef, Props>(({ isGender }, ref) => {
-  const genderRef = React.useRef<BottomSheet>(null);
-  const [gender, setGender] = React.useState<string>('');
+  const genderRef = useRef<BottomSheet>(null);
+  const [gender, setGender] = useState<string>('');
 
   useImperativeHandle(
     ref,

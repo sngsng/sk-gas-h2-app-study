@@ -10,6 +10,7 @@ import SingUpScreen from '@src/screens/SignUpScreen';
 import InputCertification from '@src/screens/SignUpScreen/components/InputCertification';
 import InputInfo from '@src/screens/SignUpScreen/components/InputInfo';
 import SignUpComplete from '@src/screens/SignUpScreen/components/SignUpComplete';
+import TermsDetailScreen from '@src/screens/TermsDetailScreen';
 import TutorialScreen from '@src/screens/TutorialScreen';
 import { RootStackParams } from '../types';
 
@@ -67,19 +68,6 @@ const RootStackNavigator = function RootStackNavigator() {
         }}
       />
       <Stack.Screen
-        name={'InfoCertification'}
-        component={InputCertification}
-        options={{
-          headerShown: true,
-          headerTitle: '회원가입',
-          animation: Platform.select({
-            android: 'slide_from_right',
-            ios: 'simple_push',
-          }),
-          headerBackTitle: '',
-        }}
-      />
-      <Stack.Screen
         name={'SignUpComplete'}
         component={SignUpComplete}
         options={{
@@ -87,6 +75,19 @@ const RootStackNavigator = function RootStackNavigator() {
           headerTitle: '회원가입',
           animation: Platform.select({
             android: 'slide_from_left',
+            ios: 'simple_push',
+          }),
+          headerBackTitle: '',
+        }}
+      />
+      <Stack.Screen
+        name={'InfoCertification'}
+        component={InputCertification}
+        options={{
+          headerShown: true,
+          headerTitle: '회원가입',
+          animation: Platform.select({
+            android: 'slide_from_right',
             ios: 'simple_push',
           }),
           headerBackTitle: '',
@@ -112,6 +113,20 @@ const RootStackNavigator = function RootStackNavigator() {
         options={{
           headerShown: true,
           headerTitle: '아이디 찾기',
+          animation: Platform.select({
+            android: 'slide_from_right',
+            ios: 'simple_push',
+          }),
+          headerBackTitle: '',
+        }}
+      />
+
+      <Stack.Screen
+        name={'TermsDetail'}
+        component={TermsDetailScreen}
+        options={{
+          headerShown: true,
+          headerTitle: 'ㄴㅁㅇㄹ',
           animation: Platform.select({
             android: 'slide_from_right',
             ios: 'simple_push',
